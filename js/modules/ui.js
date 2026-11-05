@@ -22,7 +22,7 @@ function cancelOps(){drawing=null;pull=null;mv=null;ms=null;wl=null;cr=null;rt=n
 function setTool(t){
   tool=t;cancelOps();if(t!=='sel'&&selSet.length)setSel([]);
   document.querySelectorAll('[data-tool]').forEach(b=>b.classList.toggle('on',b.dataset.tool===t));
-  hint.textContent=HINTS[t];pal.style.display=t==='paint'?'flex':'none';syncGroups(t);
+  if(hint) hint.textContent=HINTS[t];pal.style.display=t==='paint'?'flex':'none';syncGroups(t);
 }
 document.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>setTool(b.dataset.tool));
 document.getElementById('undo').onclick=()=>{
