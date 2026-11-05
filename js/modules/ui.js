@@ -6,7 +6,7 @@ function addBox(x,z,w,d,h){
   const m=new THREE.Mesh(unit,new THREE.MeshLambertMaterial({color:0xd8c3a5}));
   m.add(new THREE.LineSegments(edges,lineMat));
   m.rotation.order='YXZ';m.position.set(x,0,z);m.scale.set(w,h,d);
-  scene.add(m);boxes.push(m);return m;
+  assignLayer(m);scene.add(m);boxes.push(m);return m;
 }
 const info=document.getElementById('info'),hint=document.getElementById('hint');
 function showInfo(w,d,h){info.innerHTML='<span>العرض '+w.toFixed(1)+' م · العمق '+d.toFixed(1)+' م · الارتفاع '+h.toFixed(1)+' م</span>';}
@@ -62,7 +62,7 @@ function addCyl(x,z,d,h,kd){
   m.userData.cyl=true;m.userData.kind=kd;
   m.add(new THREE.LineSegments(GE[kd],lineMat));
   m.position.set(x,0,z);m.scale.set(d,h,d);
-  scene.add(m);boxes.push(m);return m;
+  assignLayer(m);scene.add(m);boxes.push(m);return m;
 }
 const mline=new THREE.Line(new THREE.BufferGeometry(),new THREE.LineBasicMaterial({color:0xe63946}));
 mline.visible=false;mline.frustumCulled=false;scene.add(mline);
