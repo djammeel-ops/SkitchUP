@@ -43,14 +43,14 @@ function ray(e){const r=el.getBoundingClientRect();ndc.set((e.clientX-r.left)/r.
 function ground(e,y){ray(e);plane.constant=-(y||0);const t=new THREE.Vector3();if(!rc.ray.intersectPlane(plane,t))return null;t.x=snap(t.x);t.z=snap(t.z);t.y=y||0;return t;}
 function surf(e){
   ray(e);
-  const h=rc.intersectObjects(boxes,false)[0];
+  const h=rc.intersectObjects(layerPickables(),false)[0];
   if(h){
     const n=h.face.normal.clone().transformDirection(h.object.matrixWorld);
     if(n.y>0.7)return new THREE.Vector3(snap(h.point.x),Math.round(h.point.y*100)/100,snap(h.point.z));
   }
   return ground(e,0);
 }
-function pick(e){ray(e);const h=rc.intersectObjects(boxes,false);return h.length?h[0].object:null;}
+function pick(e){ray(e);const h=rc.intersectObjects(layerPickables(),false);return h.length?h[0].object:null;}
 
 function updatePreview(){
   const a=drawing.a,b=drawing.b,w=Math.abs(a.x-b.x),d=Math.abs(a.z-b.z);
