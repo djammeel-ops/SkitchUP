@@ -16,12 +16,13 @@ function spInfo(){
 }
 function spMode(){document.getElementById('sok').textContent=stairEdit?'تم':'وضع';}
 function rebuildStairs(grp){
+  const layerId=grp.L[0]?.userData.layerId||activeLayerId;
   grp.L.forEach(m=>{scene.remove(m);const i=boxes.indexOf(m);if(i>=0)boxes.splice(i,1);});
   grp.L.length=0;
   if(grp.L.lab){grp.L.lab.slice().forEach(rmLabel);grp.L.lab.length=0;}
   select(null);
   buildStairsP(grp.L,grp.x,grp.z,grp.y0,grp.p);
-  grp.L.forEach(m=>m.userData.stair=grp);
+  grp.L.forEach(m=>{m.userData.layerId=layerId;applyLayerState(m);m.userData.stair=grp;});
 }
 function spLive(){spInfo();if(stairEdit){stairEdit.p=readSP();rebuildStairs(stairEdit);}}
 function stepN(d){const p=readSP();document.getElementById('s-n').value=Math.max(2,Math.min(60,p.n+d));spLive();}
