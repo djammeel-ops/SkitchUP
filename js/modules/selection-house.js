@@ -110,12 +110,13 @@ function hInfo(){
 }
 function hMode(){document.getElementById('hok').textContent=houseEdit?'تم':'وضع';}
 function rebuildHouse(grp){
+  const layerId=grp.L[0]?.userData.layerId||activeLayerId;
   grp.L.forEach(m=>{scene.remove(m);const i=boxes.indexOf(m);if(i>=0)boxes.splice(i,1);});
   grp.L.length=0;
   if(grp.L.lab){grp.L.lab.slice().forEach(rmLabel);grp.L.lab.length=0;}
   select(null);
   buildHouseP(grp.L,grp.x,grp.z,grp.y0,grp.p);
-  grp.L.forEach(m=>m.userData.house=grp);
+  grp.L.forEach(m=>{m.userData.layerId=layerId;applyLayerState(m);m.userData.house=grp;});
 }
 function hLive(){hInfo();if(houseEdit){houseEdit.p=readHP();rebuildHouse(houseEdit);}}
 ['h-h','h-t'].forEach(id=>document.getElementById(id).addEventListener('input',hLive));
