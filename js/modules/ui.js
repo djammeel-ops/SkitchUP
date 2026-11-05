@@ -116,6 +116,7 @@ const IC={
  clear:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/>'
 };
 Object.assign(IC,{
+ layers:'<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 12l9 5 9-5M3 16l9 5 9-5"/>',
  lib:'<path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/>',
  beam:'<path d="M3 9h18v4H3z"/><path d="M6 13l-2 6h4zM18 13l-2 6h4z"/>',
  bend:'<path d="M3 8q9 10 18 0"/><path d="M3 12q9 10 18 0"/><path d="M3 8v4M21 8v4"/>',
