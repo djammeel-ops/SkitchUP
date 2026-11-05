@@ -3,7 +3,7 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bar:#232b34ee;--fg:#e8edf2;--line:#3a4654;--on:#4d9bff;--onfg:#0b1220}}
 :root[data-theme="dark"]{--bar:#232b34ee;--fg:#e8edf2;--line:#3a4654;--on:#4d9bff;--onfg:#0b1220}
 html,body{height:100%;margin:0;overflow:hidden;background:#e8eef3;font-family:system-ui,Tahoma,"Segoe UI",sans-serif;color:var(--fg);-webkit-user-select:none;user-select:none}
-canvas{display:block;touch-action:none}
+canvas{display:block;position:fixed;inset:0;width:100vw;height:100vh;z-index:0;touch-action:none}
 .top{position:fixed;top:0;left:0;right:0;padding:calc(env(safe-area-inset-top,0px) + 10px) 12px 8px;text-align:center;font-size:14px;pointer-events:none}
 .top span{display:inline-block;background:var(--bar);padding:6px 12px;border-radius:14px;border:1px solid var(--line)}
 #info{margin-top:6px;font-size:13px;min-height:20px}
