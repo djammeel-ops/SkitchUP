@@ -59,3 +59,33 @@ button.on{background:var(--on);color:var(--onfg);border-color:var(--on)}
 .layer-state{font-size:11px;opacity:.7;min-width:42px;text-align:center}
 .layer-mini{min-width:0;padding:6px 8px;font-size:11px}
 #layersBtn{max-width:62px;position:relative;z-index:1001;pointer-events:auto}
+
+
+/* Mobile SVG icon sizing: prevent flex items from squeezing or distorting icons. */
+svg.i{
+  display:block;
+  flex:0 0 24px;
+  width:24px;
+  min-width:24px;
+  max-width:24px;
+  height:24px;
+  min-height:24px;
+  max-height:24px;
+  aspect-ratio:1 / 1;
+  box-sizing:border-box;
+  overflow:visible;
+  flex-shrink:0;
+}
+.bar button svg.i,
+.pop button svg.i{
+  flex:0 0 24px;
+  width:24px;
+  height:24px;
+}
+.bar button span,
+.pop button span{
+  display:block;
+  max-width:100%;
+  line-height:1.25;
+  text-align:center;
+}
