@@ -22,7 +22,7 @@ function refreshLayersUI(){
   const head=document.createElement('div');head.className='layers-head';
   const title=document.createElement('strong');title.textContent='الطبقات ('+layers.length+')';
   const actions=document.createElement('div');actions.className='layers-actions';
-  [['add','+ طبقة'],['rename','إعادة تسمية'],['delete','حذف الطبقة']].forEach(([action,label])=>{
+  [['add','+ طبقة'],['rename','إعادة تسمية'],['move','نقل المحدد للنشطة'],['delete','حذف الطبقة']].forEach(([action,label])=>{
     const b=document.createElement('button');b.type='button';b.dataset.action=action;b.textContent=label;
     if(action==='delete')b.disabled=layers.length<=1;
     actions.appendChild(b);
@@ -85,6 +85,12 @@ function renameActiveLayer(){
   const clean=name.trim();if(!clean){flash('اسم الطبقة لا يمكن أن يكون فارغاً');return;}
   layer.name=clean;refreshLayersUI();
 }
+function moveSelectionToActiveLayer(){
+  const selected=typeof selSet!=='undefined'&&selSet.length?selSet.slice():(sel?[sel]:[]);
+  if(!selected.length){flash('حدد مجسماً أو أكثر أولاً');return;}
+  selected.forEach(m=>{m.userData.layerId=activeLayerId;applyLayerState(m);});
+  refreshLayersUI();flash('نُقلت '+selected.length+' عناصر إلى '+findLayer(activeLayerId).name);
+}
 function deleteActiveLayer(){
   if(layers.length<=1){flash('لا يمكن حذف الطبقة الوحيدة');return;}
   const layer=findLayer(activeLayerId);if(!layer)return;
@@ -106,6 +112,7 @@ layersPanel.addEventListener('click',e=>{
   if(action==='add')addLayer();
   else if(action==='rename')renameActiveLayer();
   else if(action==='delete')deleteActiveLayer();
+  else if(action==='move')moveSelectionToActiveLayer();
   else if(action==='activate')chooseLayer(id);
   else if(action==='visibility')toggleLayerVisibility(id);
   else if(action==='lock')toggleLayerLock(id);
