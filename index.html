@@ -162,13 +162,39 @@ button.on{background:var(--on);color:var(--onfg);border-color:var(--on)}
 <button id="undo" data-ic="undo">تراجع</button>
 <button data-grp="file" data-name="ملف" data-ic="load"></button>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<div id="startup-error" role="alert" aria-live="assertive" style="display:none;position:fixed;inset:0;z-index:9999;box-sizing:border-box;padding:28px 20px;background:#f4f7fa;color:#1d2733;font:16px/1.7 system-ui,Tahoma,sans-serif;text-align:center;align-content:center;justify-content:center">
+  <div style="max-width:520px;margin:auto">
+    <h2 style="margin:0 0 12px">تعذر تشغيل الورشة ثلاثية الأبعاد</h2>
+    <p id="startup-error-message" style="margin:0 0 18px">تحقق من اتصال الإنترنت ثم أعد تحميل الصفحة.</p>
+    <button type="button" onclick="location.reload()" style="padding:10px 18px;border:0;border-radius:10px;background:#2a7fff;color:white;font:inherit">إعادة المحاولة</button>
+  </div>
+</div>
 <script>
+function showStartupError(message){
+  const panel=document.getElementById('startup-error');
+  const detail=document.getElementById('startup-error-message');
+  if(detail)detail.textContent=message;
+  if(panel){panel.style.display='grid';panel.style.display='flex';}
+}
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" onerror="showStartupError('تعذر تحميل مكتبة العرض ثلاثي الأبعاد. تحقق من اتصال الإنترنت أو جرّب لاحقاً.')"></script>
+<script>
+if(!window.THREE){
+  showStartupError('لم يتم تحميل مكتبة Three.js اللازمة للتشغيل. تحقق من اتصال الإنترنت ثم أعد المحاولة.');
+  throw new Error('Three.js failed to load');
+}
 const dark=matchMedia('(prefers-color-scheme: dark)').matches;
+const scene=('(prefers-color-scheme: dark)').matches;
 const scene=new THREE.Scene();
 scene.background=new THREE.Color(dark?0x1b2128:0xe8eef3);
 const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,0.1,300);
-const renderer=new THREE.WebGLRenderer({antialias:true});
+let renderer;
+try{
+  renderer=new THREE.WebGLRenderer({antialias:true});
+}catch(error){
+  showStartupError('المتصفح أو الجهاز لا يدعم تشغيل WebGL المطلوب لعرض المجسمات. جرّب متصفحاً حديثاً أو فعّل تسريع الرسوميات.');
+  throw error;
+}
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));
 renderer.setSize(innerWidth,innerHeight);
 document.body.prepend(renderer.domElement);
@@ -960,18 +986,57 @@ document.getElementById('copy').onclick=()=>{
   m.material.color.copy(sel.material.color);m.rotation.y=sel.rotation.y;m.position.y=sel.position.y;m.rotation.z=sel.rotation.z;
   undo.push({k:'add',m});select(m);
 };
-const KEY='workshop3d-v1';
+const KEY='workshop3d-v2';
+const LEGACY_KEY='workshop3d-v1';
+function serializeProject(){
+  return {
+    version:2,
+    objects:boxes.map(m=>({
+      x:m.position.x,z:m.position.z,
+      width:m.scale.x,depth:m.scale.z,height:m.scale.y,
+      color:m.material.color.getHex(),kind:m.userData.kind||0,
+      rotationY:m.rotation.y,baseY:m.position.y,rotationZ:m.rotation.z
+    })),
+    labels:labels.map(l=>({text:l.d.textContent,x:l.p.x,y:l.p.y,z:l.p.z}))
+  };
+}
 document.getElementById('save').onclick=()=>{
-  const data=boxes.map(m=>[m.position.x,m.position.z,m.scale.x,m.scale.z,m.scale.y,m.material.color.getHex(),m.userData.kind||0,m.rotation.y,m.position.y,m.rotation.z]);
-  try{localStorage.setItem(KEY,JSON.stringify(data));flash('تم الحفظ');}catch(e){flash('تعذر الحفظ');}
+  try{
+    localStorage.setItem(KEY,JSON.stringify(serializeProject()));
+    flash('تم حفظ المجسمات والتسميات');
+  }catch(e){
+    flash('تعذر الحفظ؛ قد تكون مساحة التخزين ممتلئة أو غير متاحة');
+  }
 };
+function validNumber(v){return typeof v==='number'&&Number.isFinite(v);}
+function restoreObject(a){
+  if(!a||typeof a!=='object')return;
+  const x=a.x??a[0],z=a.z??a[1],w=a.width??a[2],d=a.depth??a[3],h=a.height??a[4];
+  const c=a.color??a[5],kind=a.kind??a[6]??0,ry=a.rotationY??a[7]??0,y=a.baseY??a[8]??0,rz=a.rotationZ??a[9]??0;
+  if(![x,z,w,d,h,c,kind,ry,y,rz].every(validNumber)||w<=0||d<0||h<=0)return;
+  const m=kind?addCyl(x,z,w,h,kind):addBox(x,z,w,d,h);
+  m.material.color.setHex(c);m.rotation.y=ry;m.position.y=y;m.rotation.z=rz;
+}
 document.getElementById('load').onclick=()=>{
   try{
-    const s=localStorage.getItem(KEY);if(!s){flash('لا يوجد مشروع محفوظ');return;}
-    boxes.forEach(m=>scene.remove(m));boxes.length=0;undo.length=0;select(null);
-    clearLabels();JSON.parse(s).forEach(a=>{const m=a[6]?addCyl(a[0],a[1],a[2],a[4],a[6]):addBox(a[0],a[1],a[2],a[3],a[4]);m.material.color.setHex(a[5]);m.rotation.y=a[7]||0;m.position.y=a[8]||0;m.rotation.z=a[9]||0;});
-    flash('تم الفتح');
-  }catch(e){flash('تعذر الفتح');}
+    let raw=localStorage.getItem(KEY);
+    if(!raw)raw=localStorage.getItem(LEGACY_KEY);
+    if(!raw){flash('لا يوجد مشروع محفوظ على هذا الجهاز');return;}
+    const project=JSON.parse(raw);
+    const objects=Array.isArray(project)?project:project?.objects;
+    if(!Array.isArray(objects))throw new Error('Invalid project format');
+    boxes.forEach(m=>scene.remove(m));boxes.length=0;undo.length=0;setSel([]);
+    clearLabels();
+    objects.forEach(restoreObject);
+    if(!Array.isArray(project)&&Array.isArray(project.labels)){
+      project.labels.forEach(l=>{
+        if(l&&typeof l.text==='string'&&[l.x,l.y,l.z].every(validNumber))addLabel([],l.text,l.x,l.y,l.z);
+      });
+    }
+    flash('تم فتح المشروع');
+  }catch(e){
+    flash('تعذر فتح المشروع؛ الملف المحفوظ تالف أو غير متوافق');
+  }
 };
 const rc=new THREE.Raycaster(),ndc=new THREE.Vector2(),plane=new THREE.Plane(new THREE.Vector3(0,1,0),0);
 function ray(e){const r=el.getBoundingClientRect();ndc.set((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height)*2+1);rc.setFromCamera(ndc,camera);}
