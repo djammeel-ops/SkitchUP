@@ -34,6 +34,7 @@ document.getElementById('load').onclick=()=>{
     else (saved.layers||[]).forEach(l=>layers.push({id:String(l.id),name:String(l.name||'طبقة'),visible:l.visible!==false,locked:!!l.locked}));
     if(!layers.length)layers.push({id:'layer-1',name:'الطبقة 1',visible:true,locked:false});
     activeLayerId=layers.some(l=>l.id===saved.activeLayerId&&!l.locked)?saved.activeLayerId:layers.find(l=>!l.locked)?.id||layers[0].id;
+    const activeLayer=findLayer(activeLayerId);if(activeLayer)activeLayer.visible=true;
     objects.forEach(a=>{const m=a[6]?addCyl(a[0],a[1],a[2],a[4],a[6]):addBox(a[0],a[1],a[2],a[3],a[4]);m.material.color.setHex(a[5]);m.rotation.y=a[7]||0;m.position.y=a[8]||0;m.rotation.z=a[9]||0;m.userData.layerId=oldFormat?'layer-1':(a[10]||activeLayerId);applyLayerState(m);});
     refreshLayersUI();flash('تم فتح المشروع مع طبقاته');
   }catch(e){flash('تعذر الفتح');}
