@@ -46,3 +46,16 @@ svg.i{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stro
 #pal button{width:34px;height:34px;min-width:0;padding:0;border-radius:50%;border:2px solid var(--line)}
 #pal button.on{border-color:var(--fg);box-shadow:0 0 0 2px var(--on)}
 button.on{background:var(--on);color:var(--onfg);border-color:var(--on)}
+
+#layersPanel{position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 82px);display:none;background:var(--bar);border:1px solid var(--line);border-radius:14px;padding:10px;max-height:58vh;overflow-y:auto;z-index:5;backdrop-filter:blur(12px)}
+#layersPanel.open{display:block}
+.layers-head{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:8px}
+.layers-head strong{font-size:14px}
+.layers-actions{display:flex;gap:6px;flex-wrap:wrap}
+.layers-actions button{min-width:0;padding:6px 9px;font-size:12px}
+.layer-row{display:flex;align-items:center;gap:6px;padding:6px 0;border-top:1px solid var(--line)}
+.layer-main{flex:1;min-width:0;text-align:right;white-space:normal;overflow-wrap:anywhere}
+.layer-row.active .layer-main{border-color:var(--on);background:color-mix(in srgb,var(--on) 12%,transparent)}
+.layer-state{font-size:11px;opacity:.7;min-width:42px;text-align:center}
+.layer-mini{min-width:0;padding:6px 8px;font-size:11px}
+#layersBtn{max-width:62px}
