@@ -89,3 +89,52 @@ svg.i{
   line-height:1.25;
   text-align:center;
 }
+
+
+/* Responsive bottom toolbar: keep controls separated on narrow screens. */
+@media (max-width: 600px){
+  .bar{
+    box-sizing:border-box;
+    justify-content:flex-start;
+    flex-wrap:nowrap;
+    gap:4px;
+    overflow-x:auto;
+    overflow-y:hidden;
+    direction:rtl;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+    touch-action:pan-x;
+    padding-left:8px;
+    padding-right:8px;
+  }
+  .bar::-webkit-scrollbar{display:none}
+  .bar button,
+  #layersBtn{
+    box-sizing:border-box;
+    flex:0 0 58px;
+    width:58px;
+    min-width:58px;
+    max-width:58px;
+    height:54px;
+    padding:4px 1px;
+    gap:3px;
+    overflow:hidden;
+  }
+  .bar button svg.i{
+    flex:0 0 21px;
+    width:21px;
+    min-width:21px;
+    max-width:21px;
+    height:21px;
+    min-height:21px;
+    max-height:21px;
+  }
+  .bar button span{
+    width:100%;
+    font-size:9px;
+    line-height:1.15;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+}
