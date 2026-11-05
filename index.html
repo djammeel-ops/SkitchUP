@@ -7,6 +7,21 @@
 <link rel="stylesheet" href="css/main.css?v=20261105-5">
 </head>
 <body>
+<script>
+(function(){
+  function show(message){
+    var box=document.getElementById('__app_error');
+    if(!box){
+      box=document.createElement('pre');box.id='__app_error';
+      box.style.cssText='position:fixed;z-index:99999;top:8px;left:8px;right:8px;max-height:45vh;overflow:auto;white-space:pre-wrap;direction:ltr;text-align:left;background:#3b1010;color:#fff;padding:12px;border:2px solid #ff6b6b;border-radius:8px;font:12px/1.4 monospace';
+      (document.body||document.documentElement).appendChild(box);
+    }
+    box.textContent='APPLICATION ERROR\\n'+String(message);
+  }
+  window.addEventListener('error',function(e){show((e.message||'Script error')+'\\n'+(e.filename||'')+':'+(e.lineno||''));});
+  window.addEventListener('unhandledrejection',function(e){show('Promise rejection: '+(e.reason&&e.reason.stack||e.reason));});
+})();
+</script>
 <div class="top"><div id="info"></div></div>
 <div id="sa"><button id="sa-del">حذف</button><button id="sa-copy">نسخ</button><button id="sa-no">إلغاء التحديد</button></div>
 <div id="hp">
