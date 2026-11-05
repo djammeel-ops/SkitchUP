@@ -184,7 +184,6 @@ if(!window.THREE){
   throw new Error('Three.js failed to load');
 }
 const dark=matchMedia('(prefers-color-scheme: dark)').matches;
-const scene=('(prefers-color-scheme: dark)').matches;
 const scene=new THREE.Scene();
 scene.background=new THREE.Color(dark?0x1b2128:0xe8eef3);
 const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,0.1,300);
