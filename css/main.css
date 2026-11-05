@@ -224,3 +224,24 @@ svg.i{
     line-height:1.05;
   }
 }
+
+
+/* Compact toolbar icons: override earlier mobile sizing rules. */
+@media (max-width:600px){
+  body .bar button > svg.i,
+  body .bar #layersBtn > svg.i{
+    display:block;
+    flex:0 0 12px !important;
+    width:12px !important;
+    min-width:12px !important;
+    max-width:12px !important;
+    height:12px !important;
+    min-height:12px !important;
+    max-height:12px !important;
+    stroke-width:1.5;
+  }
+  body .bar button > span{
+    font-size:7px !important;
+    line-height:1 !important;
+  }
+}
