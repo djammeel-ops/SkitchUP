@@ -58,6 +58,7 @@ function toggleLayerVisibility(id){
     else{layer.visible=true;boxes.filter(m=>m.userData.layerId===id).forEach(m=>m.visible=true);flash('يجب إبقاء طبقة واحدة ظاهرة للعمل');}
   }
   if(sel&&!sel.visible)select(null);
+  if(typeof selSet!=='undefined'&&selSet.length)setSel(selSet.filter(m=>m.visible&&!isLayerLocked(m.userData.layerId)));
   refreshLayersUI();
 }
 function toggleLayerLock(id){
@@ -69,6 +70,7 @@ function toggleLayerLock(id){
     else{layer.locked=false;flash('يجب إبقاء طبقة واحدة مفتوحة للعمل');}
   }
   if(sel&&isLayerLocked(sel.userData.layerId))select(null);
+  if(typeof selSet!=='undefined'&&selSet.length)setSel(selSet.filter(m=>!isLayerLocked(m.userData.layerId)));
   refreshLayersUI();
 }
 function addLayer(){
@@ -89,7 +91,8 @@ function deleteActiveLayer(){
   const target=nextUsableLayer(layer.id);
   if(!target){flash('افتح طبقة أخرى قبل حذف هذه الطبقة');return;}
   boxes.filter(m=>m.userData.layerId===layer.id).forEach(m=>{m.userData.layerId=target.id;m.visible=target.visible;});
-  layers.splice(layers.indexOf(layer),1);activeLayerId=target.id;
+  layers.splice(layers.indexOf(layer),1);activeLayerId=target.id;target.visible=true;
+  boxes.filter(m=>m.userData.layerId===target.id).forEach(m=>m.visible=true);
   if(sel&&sel.userData.layerId===target.id)select(null);
   refreshLayersUI();flash('نُقلت عناصر الطبقة المحذوفة إلى '+target.name);
 }
