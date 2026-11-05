@@ -58,16 +58,17 @@ function selUp(e){
   if(Math.abs(s.x1-s.x0)<6&&Math.abs(s.y1-s.y0)<6){setSel([]);return;}
   const win=s.x1>=s.x0,x1=Math.min(s.x0,s.x1),x2=Math.max(s.x0,s.x1),y1=Math.min(s.y0,s.y1),y2=Math.max(s.y0,s.y1);
   setSel(boxes.filter(m=>{
+    if(!m.visible||isLayerLocked(m.userData.layerId))return false;
     const b=scrBox(m);
     return win?(b[0]>=x1&&b[2]<=x2&&b[1]>=y1&&b[3]<=y2):(b[2]>=x1&&b[0]<=x2&&b[3]>=y1&&b[1]<=y2);
   }));
 }
 function cloneMesh(m){
   const c=new THREE.Mesh(m.geometry,m.material.clone());
-  c.userData.cyl=m.userData.cyl;c.userData.kind=m.userData.kind;c.userData.N=m.userData.N;
+  c.userData.cyl=m.userData.cyl;c.userData.kind=m.userData.kind;c.userData.N=m.userData.N;c.userData.layerId=m.userData.layerId;
   c.position.copy(m.position);c.rotation.copy(m.rotation);c.scale.copy(m.scale);
   m.children.forEach(ch=>{if(ch.isLineSegments)c.add(new THREE.LineSegments(ch.geometry,lineMat));});
-  scene.add(c);boxes.push(c);return c;
+  c.visible=m.visible;scene.add(c);boxes.push(c);return c;
 }
 document.getElementById('sa-del').onclick=()=>{
   if(!selSet.length)return;
