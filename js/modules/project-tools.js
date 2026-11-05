@@ -19,15 +19,23 @@ document.getElementById('copy').onclick=()=>{
 };
 const KEY='workshop3d-v1';
 document.getElementById('save').onclick=()=>{
-  const data=boxes.map(m=>[m.position.x,m.position.z,m.scale.x,m.scale.z,m.scale.y,m.material.color.getHex(),m.userData.kind||0,m.rotation.y,m.position.y,m.rotation.z]);
-  try{localStorage.setItem(KEY,JSON.stringify(data));flash('تم الحفظ');}catch(e){flash('تعذر الحفظ');}
+  const objects=boxes.map(m=>[m.position.x,m.position.z,m.scale.x,m.scale.z,m.scale.y,m.material.color.getHex(),m.userData.kind||0,m.rotation.y,m.position.y,m.rotation.z,m.userData.layerId||activeLayerId]);
+  const data={version:2,layers:layers.map(l=>({...l})),activeLayerId,objects};
+  try{localStorage.setItem(KEY,JSON.stringify(data));flash('تم حفظ المشروع والطبقات');}catch(e){flash('تعذر الحفظ');}
 };
 document.getElementById('load').onclick=()=>{
   try{
     const s=localStorage.getItem(KEY);if(!s){flash('لا يوجد مشروع محفوظ');return;}
     boxes.forEach(m=>scene.remove(m));boxes.length=0;undo.length=0;select(null);
-    clearLabels();JSON.parse(s).forEach(a=>{const m=a[6]?addCyl(a[0],a[1],a[2],a[4],a[6]):addBox(a[0],a[1],a[2],a[3],a[4]);m.material.color.setHex(a[5]);m.rotation.y=a[7]||0;m.position.y=a[8]||0;m.rotation.z=a[9]||0;});
-    flash('تم الفتح');
+    clearLabels();
+    const saved=JSON.parse(s),oldFormat=Array.isArray(saved),objects=oldFormat?saved:(saved.objects||[]);
+    layers.splice(0,layers.length);
+    if(oldFormat)layers.push({id:'layer-1',name:'الطبقة 1',visible:true,locked:false});
+    else (saved.layers||[]).forEach(l=>layers.push({id:String(l.id),name:String(l.name||'طبقة'),visible:l.visible!==false,locked:!!l.locked}));
+    if(!layers.length)layers.push({id:'layer-1',name:'الطبقة 1',visible:true,locked:false});
+    activeLayerId=layers.some(l=>l.id===saved.activeLayerId&&!l.locked)?saved.activeLayerId:layers.find(l=>!l.locked)?.id||layers[0].id;
+    objects.forEach(a=>{const m=a[6]?addCyl(a[0],a[1],a[2],a[4],a[6]):addBox(a[0],a[1],a[2],a[3],a[4]);m.material.color.setHex(a[5]);m.rotation.y=a[7]||0;m.position.y=a[8]||0;m.rotation.z=a[9]||0;m.userData.layerId=oldFormat?'layer-1':(a[10]||activeLayerId);applyLayerState(m);});
+    refreshLayersUI();flash('تم فتح المشروع مع طبقاته');
   }catch(e){flash('تعذر الفتح');}
 };
 const rc=new THREE.Raycaster(),ndc=new THREE.Vector2(),plane=new THREE.Plane(new THREE.Vector3(0,1,0),0);
