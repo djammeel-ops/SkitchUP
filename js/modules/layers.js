@@ -102,8 +102,11 @@ function deleteActiveLayer(){
   if(sel&&sel.userData.layerId===target.id)select(null);
   refreshLayersUI();flash('نُقلت عناصر الطبقة المحذوفة إلى '+target.name);
 }
-layersBtn.addEventListener('click',()=>{
-  const open=layersPanel.classList.toggle('open');
+layersBtn.addEventListener('click',e=>{
+  e.preventDefault();e.stopPropagation();
+  const open=!layersPanel.classList.contains('open');
+  layersPanel.classList.toggle('open',open);
+  layersPanel.setAttribute('aria-hidden',String(!open));
   if(open)refreshLayersUI();
 });
 layersPanel.addEventListener('click',e=>{
