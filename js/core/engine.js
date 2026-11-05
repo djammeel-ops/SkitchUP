@@ -19,6 +19,8 @@ const unit=new THREE.BoxGeometry(1,1,1);unit.translate(0,0.5,0);
 const edges=new THREE.EdgesGeometry(unit);
 const lineMat=new THREE.LineBasicMaterial({color:dark?0xdde6ee:0x2b3540});
 const boxes=[],undo=[];
+const layers=[{id:'layer-1',name:'الطبقة 1',visible:true,locked:false}];
+let activeLayerId='layer-1';
 let sel=null,tool='orbit',drawing=null,pull=null,mv=null,ms=null,wl=null,cr=null,rt=null,pinch=null,rot=false;
 let yaw=0.8,pitch=0.6,dist=12,tx=0,tz=0;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
