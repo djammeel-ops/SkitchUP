@@ -203,6 +203,11 @@ button.on{background:var(--on);color:var(--onfg);border-color:var(--on)}
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
+if(!window.THREE){
+  document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"><\\/script>');
+}
+</script>
+<script>
 const dark=matchMedia('(prefers-color-scheme: dark)').matches;
 const scene=new THREE.Scene();
 scene.background=new THREE.Color(dark?0x1b2128:0xe8eef3);
